@@ -83,22 +83,38 @@ export const generateAdminSummary = async (data: any[]): Promise<string> => {
   Usa un tono cinematográfico, profesional y ameno. Formatea con negritas y viñetas. Máximo 250 palabras.`;
 
   try {
-    // Intentar primero con gemini-3-pro-preview, luego fallback a gemini-1.5-pro
+    // Intentar con diferentes modelos disponibles, empezando por los más recientes
     let response;
-    try {
-      response = await ai.models.generateContent({
-          model: 'gemini-3-pro-preview',
-          contents: prompt,
-          config: {
-            thinkingConfig: { thinkingBudget: 0 }
-          }
-      });
-    } catch (modelError) {
-      console.warn("Modelo gemini-3-pro-preview no disponible, intentando con gemini-1.5-pro:", modelError);
-      response = await ai.models.generateContent({
-          model: 'gemini-1.5-pro',
+    let lastError: any = null;
+    
+    // Lista de modelos a intentar en orden de preferencia
+    const modelsToTry = [
+      'gemini-3-flash-preview',
+      'gemini-3-pro-preview', 
+      'gemini-1.5-flash',
+      'gemini-1.5-pro-latest',
+      'gemini-pro'
+    ];
+    
+    for (const model of modelsToTry) {
+      try {
+        console.log(`Intentando con modelo: ${model}`);
+        response = await ai.models.generateContent({
+          model: model,
           contents: prompt
-      });
+        });
+        console.log(`Modelo ${model} funcionó correctamente`);
+        break; // Si funciona, salir del loop
+      } catch (modelError: any) {
+        console.warn(`Modelo ${model} no disponible:`, modelError?.error?.message || modelError?.message);
+        lastError = modelError;
+        continue; // Intentar siguiente modelo
+      }
+    }
+    
+    // Si ningún modelo funcionó
+    if (!response) {
+      throw lastError || new Error('Ningún modelo de Gemini está disponible');
     }
     
     // Manejar diferentes estructuras de respuesta

@@ -12,6 +12,7 @@ interface PhotoItem {
   id: string;
   url: string;
   created_at: string;
+  eliminada?: boolean;
 }
 
 const Gallery: React.FC<GalleryProps> = ({ setView }) => {
@@ -22,17 +23,43 @@ const Gallery: React.FC<GalleryProps> = ({ setView }) => {
     useEffect(() => {
       const fetchPhotos = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('fotos')
-          .select('*')
-          .order('created_at', { ascending: false });
+        try {
+          // Intentar filtrar por eliminada, si la columna no existe, simplemente obtener todas
+          let query = supabase
+            .from('fotos')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error("Error al cargar fotos:", error);
-        } else if (data) {
-          setPhotos(data);
+          // Intentar agregar el filtro de eliminada
+          const { data, error } = await query;
+
+          if (error) {
+            // Si el error es porque la columna no existe, intentar sin el filtro
+            if (error.code === '42703' || error.message?.includes('does not exist')) {
+              console.warn('Columna eliminada no existe, obteniendo todas las fotos');
+              const { data: allData, error: allError } = await supabase
+                .from('fotos')
+                .select('*')
+                .order('created_at', { ascending: false });
+              
+              if (allError) {
+                console.error("Error al cargar fotos:", allError);
+              } else if (allData) {
+                setPhotos(allData);
+              }
+            } else {
+              console.error("Error al cargar fotos:", error);
+            }
+          } else if (data) {
+            // Filtrar fotos eliminadas en el cliente si la columna existe
+            const fotosActivas = data.filter((photo: any) => !photo.eliminada);
+            setPhotos(fotosActivas);
+          }
+        } catch (err) {
+          console.error("Error inesperado al cargar fotos:", err);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       };
 
       fetchPhotos();

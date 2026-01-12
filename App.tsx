@@ -9,7 +9,7 @@ import AdminLogin from './components/AdminLogin';
 import AdminPanel from './components/AdminPanel';
 import Invitation from './components/Invitation';
 import { HomeIcon, RsvpIcon, CameraIcon, GalleryIcon } from './components/Icons';
-import { checkSupabaseConnection } from './lib/supabaseClient';
+import { checkSupabaseConnection, checkDatabaseTables } from './lib/supabaseClient';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
@@ -31,7 +31,6 @@ const App: React.FC = () => {
       const connected = await checkSupabaseConnection();
       if (connected) {
         // Si la conexión funciona, verificar que las tablas existan
-        const { checkDatabaseTables } = await import('./lib/supabaseClient');
         await checkDatabaseTables();
       }
     };
