@@ -13,12 +13,29 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // La contraseña se configura mediante la variable de entorno VITE_ADMIN_PASSWORD
-    const adminPassword = typeof process !== 'undefined' && process.env?.VITE_ADMIN_PASSWORD 
-      ? process.env.VITE_ADMIN_PASSWORD 
-      : '';
+    // Intentar leer de process.env (definido en vite.config.ts) o import.meta.env (Vite nativo)
+    let adminPassword = '';
+    try {
+      if (typeof process !== 'undefined' && process.env?.VITE_ADMIN_PASSWORD) {
+        adminPassword = process.env.VITE_ADMIN_PASSWORD;
+      } else {
+        const metaEnv = (import.meta as any)?.env;
+        if (metaEnv?.VITE_ADMIN_PASSWORD) {
+          adminPassword = metaEnv.VITE_ADMIN_PASSWORD;
+        }
+      }
+    } catch (e) {
+      console.warn('Error al leer variables de entorno:', e);
+    }
     
     if (!adminPassword) {
       console.error('⚠️ VITE_ADMIN_PASSWORD no está configurada en las variables de entorno');
+      console.error('Debug - process.env:', typeof process !== 'undefined' ? process.env : 'no disponible');
+      try {
+        console.error('Debug - import.meta.env:', (import.meta as any)?.env || 'no disponible');
+      } catch {
+        console.error('Debug - import.meta.env: no disponible');
+      }
       setError(true);
       setTimeout(() => setError(false), 2000);
       return;

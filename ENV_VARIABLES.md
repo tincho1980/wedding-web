@@ -4,24 +4,26 @@ Este documento describe todas las variables de entorno necesarias para el proyec
 
 ## Variables Requeridas
 
-### 1. GEMINI_API_KEY
+Todas las variables de entorno usan el prefijo `VITE_` para que sean accesibles en el código del cliente.
+
+### 1. VITE_GEMINI_API_KEY
 - **Descripción**: API Key de Google Gemini para generar respuestas inteligentes
-- **Uso en código**: `process.env.API_KEY` y `process.env.GEMINI_API_KEY`
-- **Definida en vite.config**: ✅ Ambos (`API_KEY` y `GEMINI_API_KEY`)
-- **Archivo .env**: `GEMINI_API_KEY=tu_api_key_aqui`
+- **Uso en código**: `process.env.VITE_GEMINI_API_KEY` (también disponible como `process.env.API_KEY` y `process.env.GEMINI_API_KEY` para compatibilidad)
+- **Definida en vite.config**: ✅
+- **Archivo .env**: `VITE_GEMINI_API_KEY=tu_api_key_aqui`
 - **Obtener en**: https://aistudio.google.com/app/apikey
 
 ### 2. VITE_SUPABASE_URL
 - **Descripción**: URL de tu proyecto Supabase
-- **Uso en código**: `process.env.VITE_SUPABASE_URL` (con fallbacks a `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_URL`)
-- **Definida en vite.config**: ✅ Como `VITE_SUPABASE_URL` (con fallbacks)
+- **Uso en código**: `process.env.VITE_SUPABASE_URL`
+- **Definida en vite.config**: ✅
 - **Archivo .env**: `VITE_SUPABASE_URL=https://tu-proyecto.supabase.co`
 - **Obtener en**: Supabase Dashboard > Settings > API > Project URL
 
 ### 3. VITE_SUPABASE_ANON_KEY
 - **Descripción**: Clave anónima pública de Supabase
-- **Uso en código**: `process.env.VITE_SUPABASE_ANON_KEY` (con fallbacks a `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_ANON_KEY`)
-- **Definida en vite.config**: ✅ Como `VITE_SUPABASE_ANON_KEY` (con fallbacks)
+- **Uso en código**: `process.env.VITE_SUPABASE_ANON_KEY`
+- **Definida en vite.config**: ✅
 - **Archivo .env**: `VITE_SUPABASE_ANON_KEY=tu_anon_key_aqui`
 - **Obtener en**: Supabase Dashboard > Settings > API > anon public key
 
@@ -38,7 +40,7 @@ Crea un archivo `.env` en la raíz del proyecto con este formato:
 
 ```env
 # API Key de Google Gemini
-GEMINI_API_KEY=tu_api_key_de_gemini_aqui
+VITE_GEMINI_API_KEY=tu_api_key_de_gemini_aqui
 
 # Configuración de Supabase
 VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
@@ -67,17 +69,32 @@ Para desplegar en Cloudflare Pages, necesitás configurar las variables de entor
 
 ### Variables requeridas en Cloudflare:
 
-- **GEMINI_API_KEY**: Tu API key de Google Gemini
-- **NEXT_PUBLIC_SUPABASE_URL** o **VITE_SUPABASE_URL**: URL de tu proyecto Supabase
-- **NEXT_PUBLIC_SUPABASE_ANON_KEY** o **VITE_SUPABASE_ANON_KEY**: Clave anónima de Supabase
+- **VITE_GEMINI_API_KEY**: Tu API key de Google Gemini
+- **VITE_SUPABASE_URL**: URL de tu proyecto Supabase
+- **VITE_SUPABASE_ANON_KEY**: Clave anónima de Supabase
 - **VITE_ADMIN_PASSWORD**: Contraseña del panel de administración
+
+### ⚠️ IMPORTANTE - Configuración en Cloudflare:
+
+1. **Marcar variables como "Available in Build"**: 
+   - Cuando agregues cada variable, asegurate de marcar la opción **"Available in Build"** o **"Available in Production"**
+   - Esto es CRÍTICO porque Vite necesita las variables durante el proceso de build
+   - Sin esta opción marcada, las variables no estarán disponibles durante el build y no se inyectarán en el código
+
+2. **Después de agregar/modificar variables**:
+   - Necesitás hacer un **nuevo deploy** para que los cambios surtan efecto
+   - Las variables se leen durante el build, no en runtime
+
+3. **Verificación**:
+   - Podés ejecutar `npm run check-env` localmente para verificar que las variables estén disponibles
+   - En Cloudflare, revisá los logs del build para ver si hay advertencias sobre variables faltantes
 
 ### Notas para Cloudflare:
 
-- ✅ El código soporta múltiples nombres de variables (ej: `NEXT_PUBLIC_SUPABASE_URL` o `VITE_SUPABASE_URL`)
+- ✅ Todas las variables usan el prefijo `VITE_` para consistencia
 - ✅ Las variables se inyectan durante el build automáticamente
-- ✅ Después de agregar/modificar variables, necesitás hacer un nuevo deploy
-- ⚠️ Asegurate de que las variables estén marcadas como "Available in Production" si querés que funcionen en producción
+- ⚠️ **CRÍTICO**: Las variables DEBEN estar marcadas como "Available in Build" o no funcionarán
+- ⚠️ Después de agregar/modificar variables, necesitás hacer un nuevo deploy
 
 ## Notas Importantes
 

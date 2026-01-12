@@ -4,9 +4,23 @@ const getEnv = (key: string): string => {
   try {
     // En Vite, las variables de entorno están disponibles a través de process.env
     // cuando están definidas en vite.config.ts, o a través de import.meta.env
-    // Usamos process.env que está configurado en vite.config.ts
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env[key] || '';
+    // Intentar ambos métodos para máxima compatibilidad
+    if (typeof process !== 'undefined' && process.env && process.env[key]) {
+      return process.env[key];
+    }
+    // Fallback a import.meta.env (método nativo de Vite)
+    // En Vite, import.meta.env está disponible directamente en módulos ES
+    // Usamos una verificación segura para evitar errores en contextos donde no está disponible
+    try {
+      // Acceso directo a import.meta.env (Vite lo inyecta automáticamente)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - import.meta es válido en módulos ES
+      const metaEnv = (import.meta as { env?: Record<string, string> })?.env;
+      if (metaEnv && metaEnv[key]) {
+        return metaEnv[key];
+      }
+    } catch {
+      // import.meta no disponible en este contexto, usar solo process.env
     }
     return '';
   } catch {
@@ -14,18 +28,9 @@ const getEnv = (key: string): string => {
   }
 };
 
-// Intentar obtener las variables de entorno con diferentes nombres posibles
-const supabaseUrl = 
-  getEnv('VITE_SUPABASE_URL') || 
-  getEnv('NEXT_PUBLIC_SUPABASE_URL') || 
-  getEnv('SUPABASE_URL') || 
-  '';
-
-const supabaseAnonKey = 
-  getEnv('VITE_SUPABASE_ANON_KEY') || 
-  getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY') || 
-  getEnv('SUPABASE_ANON_KEY') || 
-  '';
+// Obtener las variables de entorno (todas con prefijo VITE_)
+const supabaseUrl = getEnv('VITE_SUPABASE_URL');
+const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
 
 // Inicialización segura para evitar que la app se rompa si faltan keys
 let supabaseInstance: SupabaseClient | null = null;
