@@ -9,10 +9,121 @@ interface InvitationProps {
   guestNames?: string;
 }
 
+const CinemaBanner: React.FC<{ 
+  images: { src: string; title: string }[]; 
+  side: 'left' | 'right';
+  onImageClick: (src: string) => void;
+}> = ({ images, side, onImageClick }) => {
+  const rotations = side === 'left' ? [-3, 2, -1.5] : [2.5, -2, 3];
+  
+  return (
+    <div 
+      className={`hidden lg:flex flex-col gap-12 w-64 fixed top-0 h-screen justify-center z-0 ${
+        side === 'left' ? 'left-6 animate-slide-in-left' : 'right-6 animate-slide-in-right'
+      }`}
+    >
+      {images.map((img, idx) => (
+        <div 
+          key={idx} 
+          className="relative group rounded-sm shadow-2xl transition-all duration-500 hover:scale-110 hover:z-10 cursor-pointer"
+          style={{ transform: `rotate(${rotations[idx % rotations.length]}deg)` }}
+          onClick={() => onImageClick(img.src)}
+        >
+          <div className="bg-white p-2 pb-6 shadow-md border border-gray-200">
+            <div className="aspect-video w-full overflow-hidden bg-black">
+              <img 
+                src={img.src} 
+                alt={img.title} 
+                className="w-full h-full object-cover filter sepia-[0.2] brightness-95 grayscale-[0.1] transition-transform duration-700 group-hover:scale-105" 
+                onError={(e) => {
+                  console.error(`Error cargando imagen: ${img.src}`);
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+            <div className="mt-3 text-center">
+              <span className="text-[#a77b3b] text-[10px] md:text-[11px] uppercase tracking-[0.2em] font-serif italic font-semibold">{img.title}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const MobileCinemaStack: React.FC<{ 
+  images: { src: string; title: string }[];
+  onImageClick: (src: string) => void;
+}> = ({ images, onImageClick }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div className="lg:hidden relative h-64 w-full max-w-[320px] mx-auto mb-16 mt-8">
+      {images.map((img, idx) => {
+        const offset = (idx - currentIndex + images.length) % images.length;
+        const isTop = offset === 0;
+        const rotations = [3, -4, 2, -2, 5, -3];
+        const rotation = rotations[idx % rotations.length];
+
+        return (
+          <div
+            key={idx}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out bg-white p-2 pb-6 shadow-xl border border-gray-100 rounded-sm cursor-pointer`}
+            style={{
+              zIndex: images.length - offset,
+              transform: isTop 
+                ? `rotate(${rotation}deg) translateY(0) scale(1)` 
+                : `rotate(${rotation}deg) translateY(${offset * 4}px) scale(${1 - offset * 0.05})`,
+              opacity: offset > 3 ? 0 : 1,
+              visibility: offset > 3 ? 'hidden' : 'visible'
+            }}
+            onClick={() => onImageClick(img.src)}
+          >
+            <div className="aspect-video w-full overflow-hidden bg-black">
+              <img 
+                src={img.src} 
+                alt={img.title} 
+                className="w-full h-full object-cover filter sepia-[0.1] brightness-90" 
+                onError={(e) => {
+                  console.error(`Error cargando imagen: ${img.src}`);
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+            <div className="mt-2 text-center">
+              <span className="text-[#a77b3b] text-[10px] uppercase tracking-widest font-serif italic">{img.title}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
   const weddingDate = new Date('2026-02-28T18:00:00');
   const [copied, setCopied] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const alias = "BODA.ROSALIA.MARTIN";
+
+  const allScenes = [
+    { src: "/images/banners/titanic.jpg", title: "Titanic" },
+    { src: "/images/banners/pritty_woman.jpg", title: "Pretty Woman" },
+    { src: "/images/banners/harry_conocio_sally.jpg", title: "Cuando Harry Conocio Sally" },
+    { src: "/images/banners/ghost.png", title: "Ghost" },
+    { src: "/images/banners/starwars.png", title: "Star Wars" },
+    { src: "/images/banners/casa_blanca.png", title: "Casa" }
+  ];
+
+  const leftScenes = allScenes.slice(0, 3);
+  const rightScenes = allScenes.slice(3, 6);
 
   // Formatear los nombres para el saludo
   const formatGuestNames = (names?: string): string => {
@@ -40,9 +151,16 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
     setView('rsvp');
   };
 
+  const handleImageClick = (src: string) => {
+    setSelectedImage(src);
+  };
+
   return (
     <div className="relative min-h-screen bg-[#FFFBF5] text-[#5D4037]">
-      <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto px-4 py-12 animate-fade-in">
+      <CinemaBanner images={leftScenes} side="left" onImageClick={handleImageClick} />
+      <CinemaBanner images={rightScenes} side="right" onImageClick={handleImageClick} />
+
+      <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto px-4 py-12 animate-fade-in relative z-10">
         
         {/* Header Principal */}
         <header className="mb-12 w-full">
@@ -80,6 +198,8 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
             </div>
           </div>
         </header>
+
+        <MobileCinemaStack images={allScenes} onImageClick={handleImageClick} />
 
         {/* Countdown */}
         <div className="w-full mb-12">
@@ -174,6 +294,29 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           </p>
         </div>
       </div>
+
+      {/* Modal para ver imagen ampliada */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] animate-fade-in p-4 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-full max-h-full">
+            <img 
+              src={selectedImage} 
+              alt="Vista ampliada" 
+              className="max-w-[95vw] max-h-[90vh] rounded-lg shadow-2xl border-4 border-white/10 object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button 
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/80 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 text-xl font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

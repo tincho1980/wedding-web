@@ -57,9 +57,32 @@ Para verificar que las variables están configuradas correctamente:
 3. Abrí la consola del navegador (F12) y verificá los mensajes de inicialización
 4. Si ves advertencias sobre variables faltantes, revisá el archivo `.env`
 
+## Configuración en Cloudflare Pages
+
+Para desplegar en Cloudflare Pages, necesitás configurar las variables de entorno en el dashboard de Cloudflare:
+
+1. Ve a tu proyecto en Cloudflare Pages
+2. Navega a **Settings** > **Environment Variables**
+3. Agrega las siguientes variables (pueden tener cualquiera de estos nombres, el código las detectará automáticamente):
+
+### Variables requeridas en Cloudflare:
+
+- **GEMINI_API_KEY**: Tu API key de Google Gemini
+- **NEXT_PUBLIC_SUPABASE_URL** o **VITE_SUPABASE_URL**: URL de tu proyecto Supabase
+- **NEXT_PUBLIC_SUPABASE_ANON_KEY** o **VITE_SUPABASE_ANON_KEY**: Clave anónima de Supabase
+- **VITE_ADMIN_PASSWORD**: Contraseña del panel de administración
+
+### Notas para Cloudflare:
+
+- ✅ El código soporta múltiples nombres de variables (ej: `NEXT_PUBLIC_SUPABASE_URL` o `VITE_SUPABASE_URL`)
+- ✅ Las variables se inyectan durante el build automáticamente
+- ✅ Después de agregar/modificar variables, necesitás hacer un nuevo deploy
+- ⚠️ Asegurate de que las variables estén marcadas como "Available in Production" si querés que funcionen en producción
+
 ## Notas Importantes
 
 - ⚠️ **NUNCA** subas el archivo `.env` al repositorio (debe estar en `.gitignore`)
 - ✅ Las variables con prefijo `VITE_` son accesibles en el código del cliente
 - ✅ Las variables sin prefijo solo están disponibles en el servidor (build time)
 - 🔄 Después de modificar `.env`, necesitás reiniciar el servidor de desarrollo
+- 🌐 En Cloudflare, las variables se leen de `process.env` durante el build, no del archivo `.env`
