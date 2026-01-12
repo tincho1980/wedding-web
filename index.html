@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rosalía y Martín | ¡Nos Casamos!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      h1, h2, h3, .font-serif {
+        font-family: 'Playfair Display', serif;
+      }
+      @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-100px) scale(0.8); }
+        to { opacity: 1; transform: translateX(0) scale(1); }
+      }
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(100px) scale(0.8); }
+        to { opacity: 1; transform: translateX(0) scale(1); }
+      }
+      .animate-slide-in-left {
+        animation: slideInLeft 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      }
+      .animate-slide-in-right {
+        animation: slideInRight 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      }
+      @keyframes flyAway {
+        to { opacity: 0; transform: translateY(-150px) scale(0.3) rotate(15deg); }
+      }
+      .animate-fly-away {
+        animation: flyAway 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+      }
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in {
+        animation: fadeIn 1s ease-out forwards;
+      }
+      @keyframes jump-up {
+        0%, 100% { transform: translateY(-1rem); }
+        50% { transform: translateY(-1.75rem); }
+      }
+      .animate-jump-up {
+        animation: jump-up 1.5s infinite ease-in-out;
+      }
+      .glow-rsvp {
+        box-shadow: 0 10px 25px rgba(128, 0, 32, 0.5);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.1/+esm"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
