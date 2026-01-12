@@ -38,9 +38,25 @@ try {
     console.warn("⚠️ Supabase: Credenciales incompletas o inválidas. La funcionalidad de DB/Storage estará limitada.");
     console.warn(`URL: ${supabaseUrl ? '✓' : '✗'}, Key: ${supabaseAnonKey ? '✓' : '✗'}`);
     // Creamos un proxy para evitar errores de 'cannot read property of null'
-    supabaseInstance = new Proxy({} as SupabaseClient, {
-      get: () => () => ({ data: null, error: new Error("Supabase no configurado") })
+    // Este proxy maneja propiedades anidadas como storage.from()
+    const errorResponse = { data: null, error: new Error("Supabase no configurado") };
+    const createErrorProxy = (): any => new Proxy({}, {
+      get: (target, prop) => {
+        // Si se accede a 'storage', devolvemos un objeto con 'from'
+        if (prop === 'storage') {
+          return {
+            from: () => ({
+              upload: () => Promise.resolve(errorResponse),
+              getPublicUrl: () => ({ data: { publicUrl: '' } })
+            })
+          };
+        }
+        // Para otras propiedades, devolvemos funciones que retornan errores
+        return createErrorProxy;
+      },
+      apply: () => errorResponse
     });
+    supabaseInstance = createErrorProxy() as SupabaseClient;
   }
 } catch (e) {
   console.error("❌ Error al inicializar Supabase:", e);

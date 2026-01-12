@@ -42,6 +42,13 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setView }) => {
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) return;
+    
+    // Verificar que Supabase esté configurado
+    if (!supabase || !supabase.storage) {
+      setError('Error: Supabase no está configurado. Por favor, verifica las variables de entorno.');
+      return;
+    }
+
     setUploading(true);
     setProgress(0);
     setError(null);
@@ -52,6 +59,11 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setView }) => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
         const filePath = `uploads/${fileName}`;
+
+        // Verificar que storage.from sea una función
+        if (typeof supabase.storage?.from !== 'function') {
+          throw new Error('Supabase Storage no está disponible. Verifica la configuración.');
+        }
 
         // 1. Subir al Storage bucket 'fotos'
         const { error: uploadError } = await supabase.storage
@@ -85,8 +97,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setView }) => {
       }, 1000);
 
     } catch (err: any) {
-      console.error(err);
-      setError('Error al subir las fotos: ' + err.message);
+      console.error('Error al subir fotos:', err);
+      setError('Error al subir las fotos: ' + (err.message || 'Error desconocido'));
       setUploading(false);
     }
   };
