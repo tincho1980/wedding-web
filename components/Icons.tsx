@@ -46,7 +46,19 @@ export const CheckIcon: React.FC<IconProps> = ({ className = 'w-6 h-6' }) => (
 );
 
 export const HangerIcon: React.FC<IconProps> = ({ className = 'w-6 h-6' }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6a3 3 0 11-6 0 3 3 0 016 0zm-6 3a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM15 15l4 4m0-4l-4 4" /></svg>
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    {/* Percha de ropa - diseño simple y reconocible */}
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 4h6a1 1 0 011 1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 7v15M8 22h8" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8l-2.5 2.5L5 13M19 8l2.5 2.5L19 13" />
+  </svg>
+);
+
+export const DressIcon: React.FC<IconProps> = ({ className = 'w-6 h-6' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    {/* Vestido elegante - silueta */}
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2v4m0 0h-2m2 0h2m-2 0v2m0-2v2m0 0v2m0 0v14a2 2 0 01-2 2h-2a2 2 0 01-2-2V10m0 0h16M4 10h16" />
+  </svg>
 );
 
 export const UsersIcon: React.FC<IconProps> = ({ className = 'w-6 h-6' }) => (
