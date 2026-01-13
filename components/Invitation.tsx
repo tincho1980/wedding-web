@@ -111,7 +111,7 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
   const weddingDate = new Date('2026-02-28T18:00:00');
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const alias = "BODA.ROSALIA.MARTIN";
+  const alias = "BODA.ROSI.MARTIN";
 
   const allScenes = [
     { src: "/images/banners/titanic.jpg", title: "Titanic" },

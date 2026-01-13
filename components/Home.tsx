@@ -111,7 +111,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
-  const alias = "BODA.ROSALIA.MARTIN"; 
+  const alias = "BODA.ROSI.MARTIN"; 
 
   const allScenes = [
     { src: "/images/banners/titanic.jpg", title: "Titanic" },
