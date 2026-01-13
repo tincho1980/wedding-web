@@ -116,8 +116,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setView }) => {
   return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-2xl text-center animate-fade-in-up">
       <CameraIcon className="w-16 h-16 text-[#a77b3b] mx-auto mb-4" />
-      <h1 className="text-4xl font-serif mb-2 text-[#a77b3b]">Compartí tus Momentos</h1>
-      <p className="text-gray-500 mb-8">Subí tus fotos a nuestro álbum digital de Supabase.</p>
+      <h1 className="text-4xl font-serif mb-2 text-[#a77b3b]">Compartí tus momentos con nosotros</h1>
+      <p className="text-gray-500 mb-8">Subí tus fotos a nuestro álbum online para que todos puedan verlos.</p>
 
       {success ? (
         <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 animate-fade-in">
