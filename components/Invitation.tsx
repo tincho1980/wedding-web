@@ -206,17 +206,6 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           <Countdown targetDate={weddingDate} />
         </div>
 
-        {/* Botón Principal de Confirmación */}
-        <div className="w-full mb-16">
-          <button
-            onClick={handleConfirmAttendance}
-            className="bg-[#800020] hover:bg-[#6D071A] text-white font-bold py-5 px-16 rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300 tracking-[0.2em] uppercase text-base md:text-lg flex items-center mx-auto"
-          >
-            <RsvpIcon className="w-6 h-6 mr-3" />
-            Confirmar Asistencia
-          </button>
-        </div>
-
         {/* Información Importante */}
         <div className="w-full space-y-8 mb-12">
           {/* Dress Code */}
@@ -305,6 +294,17 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           </p>
         </div>
       </div>
+
+ {/* Botón Principal de Confirmación */}
+ <div className="w-full mb-16">
+          <button
+            onClick={handleConfirmAttendance}
+            className="bg-[#800020] hover:bg-[#6D071A] text-white font-bold py-5 px-16 rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300 tracking-[0.2em] uppercase text-base md:text-lg flex items-center mx-auto"
+          >
+            <RsvpIcon className="w-6 h-6 mr-3" />
+            Confirmar Asistencia
+          </button>
+        </div>
 
       {/* Modal para ver imagen ampliada */}
       {selectedImage && (
