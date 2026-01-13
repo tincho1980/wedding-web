@@ -34,6 +34,14 @@ Todas las variables de entorno usan el prefijo `VITE_` para que sean accesibles 
 - **Archivo .env**: `VITE_ADMIN_PASSWORD=tu_contraseña_segura`
 - **Nota**: Esta variable es pública (prefijo VITE_), úsala solo para desarrollo/demo
 
+### 5. VITE_RESEND_API_KEY
+- **Descripción**: API Key de Resend para enviar emails de notificación de confirmaciones
+- **Uso en código**: `process.env.VITE_RESEND_API_KEY`
+- **Definida en vite.config**: ✅
+- **Archivo .env**: `VITE_RESEND_API_KEY=re_tu_api_key_aqui`
+- **Obtener en**: https://resend.com/api-keys
+- **Nota**: Opcional. Si no está configurada, no se enviarán emails de notificación
+
 ## Estructura del archivo .env
 
 Crea un archivo `.env` en la raíz del proyecto con este formato:
@@ -48,6 +56,9 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key_aqui
 
 # Contraseña del panel de administración
 VITE_ADMIN_PASSWORD=tu_contraseña_segura_aqui
+
+# API Key de Resend para notificaciones por email (opcional)
+VITE_RESEND_API_KEY=re_tu_api_key_aqui
 ```
 
 ## Verificación
@@ -73,6 +84,7 @@ Para desplegar en Cloudflare Pages, necesitás configurar las variables de entor
 - **VITE_SUPABASE_URL**: URL de tu proyecto Supabase
 - **VITE_SUPABASE_ANON_KEY**: Clave anónima de Supabase
 - **VITE_ADMIN_PASSWORD**: Contraseña del panel de administración
+- **VITE_RESEND_API_KEY**: (Opcional) API Key de Resend para notificaciones por email
 
 ### ⚠️ IMPORTANTE - Configuración en Cloudflare:
 

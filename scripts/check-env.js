@@ -10,9 +10,14 @@ const requiredVars = [
   'VITE_ADMIN_PASSWORD'
 ];
 
+const optionalVars = [
+  'VITE_RESEND_API_KEY'
+];
+
 let found = 0;
 let missing = 0;
 
+console.log('📋 Variables requeridas:');
 requiredVars.forEach(varName => {
   const value = process.env[varName];
   if (value) {
@@ -24,13 +29,23 @@ requiredVars.forEach(varName => {
   }
 });
 
-console.log(`\n📊 Resumen: ${found} encontradas, ${missing} faltantes`);
+console.log('\n📋 Variables opcionales:');
+optionalVars.forEach(varName => {
+  const value = process.env[varName];
+  if (value) {
+    console.log(`✅ ${varName}: ${value.substring(0, 20)}...`);
+  } else {
+    console.log(`⚠️  ${varName}: NO ENCONTRADA (opcional)`);
+  }
+});
+
+console.log(`\n📊 Resumen: ${found}/${requiredVars.length} variables requeridas encontradas, ${missing} faltantes`);
 
 if (missing > 0) {
-  console.log('\n⚠️  Algunas variables no están configuradas.');
+  console.log('\n⚠️  Algunas variables requeridas no están configuradas.');
   console.log('   En Cloudflare Pages, asegurate de que las variables estén marcadas como "Available in Build"');
   process.exit(1);
 } else {
-  console.log('\n✅ Todas las variables están configuradas correctamente');
+  console.log('\n✅ Todas las variables requeridas están configuradas correctamente');
   process.exit(0);
 }

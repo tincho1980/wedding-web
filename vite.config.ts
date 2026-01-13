@@ -38,7 +38,10 @@ export default defineConfig(({ mode }) => {
         'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(getEnv('VITE_SUPABASE_ANON_KEY')),
         
         // Contraseña de administración
-        'process.env.VITE_ADMIN_PASSWORD': JSON.stringify(getEnv('VITE_ADMIN_PASSWORD'))
+        'process.env.VITE_ADMIN_PASSWORD': JSON.stringify(getEnv('VITE_ADMIN_PASSWORD')),
+        
+        // Resend API Key para envío de emails
+        'process.env.VITE_RESEND_API_KEY': JSON.stringify(getEnv('VITE_RESEND_API_KEY'))
       },
       resolve: {
         alias: {
