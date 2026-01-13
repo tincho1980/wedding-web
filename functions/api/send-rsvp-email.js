@@ -5,20 +5,8 @@
 
 import { Resend } from 'resend';
 
-export interface Env {
-  RESEND_API_KEY: string;
-}
-
-interface RsvpData {
-  name: string;
-  attending: boolean;
-  guests: number;
-  guestNames: string;
-  comments: string;
-}
-
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request, env) {
     // Manejar CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {
@@ -46,7 +34,7 @@ export default {
         throw new Error('RESEND_API_KEY no está configurada');
       }
 
-      const data: RsvpData = await request.json();
+      const data = await request.json();
 
       const resend = new Resend(env.RESEND_API_KEY);
 
@@ -110,7 +98,7 @@ Este email fue enviado automáticamente desde el sistema de confirmaciones de bo
           },
         }
       );
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error al enviar email:', error);
       return new Response(
         JSON.stringify({ 
