@@ -116,10 +116,10 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
   const allScenes = [
     { src: "/images/banners/titanic.jpg", title: "Titanic" },
     { src: "/images/banners/pritty_woman.jpg", title: "Pretty Woman" },
-    { src: "/images/banners/harry_conocio_sally.jpg", title: "Cuando Harry Conocio Sally" },
+    { src: "/images/banners/harry_conocio_sally.jpg", title: "Cuando Harry Conocio a Sally" },
     { src: "/images/banners/ghost.png", title: "Ghost" },
     { src: "/images/banners/starwars.png", title: "Star Wars" },
-    { src: "/images/banners/casa_blanca.png", title: "Casa" }
+    { src: "/images/banners/casa_blanca.png", title: "Casablanca" }
   ];
 
   const leftScenes = allScenes.slice(0, 3);
@@ -224,8 +224,11 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
             <HangerIcon className="w-12 h-12 text-[#800020] mb-4" />
             <h4 className="font-serif text-3xl font-bold text-[#800020] mb-3 uppercase tracking-tight">Dress Code</h4>
             <p className="text-gray-700 font-bold text-xl mb-2">Elegante Sport</p>
-            <p className="text-base text-gray-600 italic mt-2 leading-relaxed text-center max-w-md">
-              Amamos el color, pero el único color prohibido es{' '}
+            <p className="text-base text-gray-500 italic mt-2 leading-relaxed text-center max-w-md">
+              Venite lindo/a y cómodo/a,<br/>
+            </p>
+            <p className="text-base text-gray-500 italic mt-2 leading-relaxed text-center max-w-md">
+              el único color prohibido es <br/>
               <span className="text-[#800020] font-bold uppercase underline">el morado</span>.
             </p>
           </div>
@@ -235,7 +238,10 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
             <UsersIcon className="w-12 h-12 text-[#800020] mb-4" />
             <h4 className="font-serif text-3xl font-bold text-[#800020] mb-3 uppercase tracking-tight">Niños</h4>
             <p className="text-base text-gray-600 leading-relaxed italic px-4 text-center max-w-md">
-              Nos encantan los niños, pero hemos decidido tener una noche solo para adultos. ¡Agradecemos su comprensión!
+              Nos encantan los niños, pero hemos decidido tener una noche solo para adultos.
+            </p>
+            <p className="text-base text-gray-600 leading-relaxed italic px-4 text-center max-w-md">
+              ¡Agradecemos su comprensión!
             </p>
           </div>
         </div>
@@ -245,24 +251,29 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           <GiftIcon className="w-16 h-16 text-[#800020] mx-auto mb-6" />
           <h3 className="font-serif text-4xl md:text-5xl mb-4 text-[#800020]">Lista de Regalos</h3>
           <p className="text-gray-600 italic mb-8 max-w-md mx-auto leading-relaxed text-lg">
-            Si deseás hacernos un presente, agradeceríamos mucho tu colaboración para nuestra luna de miel.
+          Nuestro mejor regalo es tu presencia...
+          <br/>
+          ¡pero la luna de miel no se paga sola!
+          <br/>
+          ¡Ayudanos con el viaje!
           </p>
           
-          <div className="flex flex-col items-center bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-sm mx-auto">
+          <div className="flex flex-col items-center bg-white p-4 md:p-8 rounded-3xl shadow-xl border border-gray-100 max-w-sm mx-auto w-full">
             <span className="text-xs uppercase tracking-[0.3em] text-gray-400 mb-3 font-bold">Datos Bancarios</span>
-            <div className="flex items-center space-x-3 bg-gray-50 px-6 py-4 rounded-2xl border border-gray-100 mb-4 w-full justify-between">
-              <span className="text-xl font-mono font-bold text-[#5D4037] tracking-tighter">{alias}</span>
+            <div className="flex items-center space-x-2 md:space-x-3 bg-gray-50 px-3 md:px-6 py-3 md:py-4 rounded-2xl border border-gray-100 mb-4 w-full min-w-0">
+              <span className="text-sm md:text-xl font-mono font-bold text-[#5D4037] tracking-tighter truncate flex-1 min-w-0">{alias}</span>
               <button 
                 onClick={copyToClipboard}
-                className={`p-2 rounded-full transition-all duration-300 ${copied ? 'bg-green-100 text-green-600' : 'bg-white shadow-sm text-gray-500 hover:text-[#800020]'}`}
+                className={`flex-shrink-0 p-2 rounded-full transition-all duration-300 ${copied ? 'bg-green-100 text-green-600' : 'bg-white shadow-sm text-gray-500 hover:text-[#800020]'}`}
               >
-                {copied ? <CheckIcon className="w-6 h-6" /> : <CopyIcon className="w-6 h-6" />}
+                {copied ? <CheckIcon className="w-5 h-5 md:w-6 md:h-6" /> : <CopyIcon className="w-5 h-5 md:w-6 md:h-6" />}
               </button>
             </div>
             
             <div className="w-full text-center space-y-2">
-              <p className="text-sm text-gray-400">Banco: <span className="font-bold text-gray-600">Galicia</span></p>
-              <p className="text-sm text-gray-400">Titular: <span className="font-bold text-gray-600">Martín Pérez</span></p>
+            <p className="text-xs text-gray-400">Billetera: <span className="font-bold text-gray-600">Naranja X</span></p>
+              <p className="text-xs text-gray-400">CBU: <span className="font-bold text-gray-600">4530000800015271711245</span></p>
+              <p className="text-xs text-gray-400">Titular: <span className="font-bold text-gray-600">Martín Ramallo</span></p>
             </div>
           </div>
         </div>
@@ -272,13 +283,13 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           <h3 className="font-serif text-3xl mb-6 text-[#a77b3b] border-b border-[#E1C16E] pb-2 inline-block">Ubicación</h3>
           <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gray-100">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.272102046896!2d-57.95856412431792!3d-34.922883572841915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e62b1f00e49d%3A0x3d58e2a22f20739c!2sCatedral%20de%20La%20Plata!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" 
+              src="https://www.google.com/maps?q=-34.82784390680582,-57.9646773662116&hl=es&z=15&output=embed&markers=color:red%7Clabel:V%7C-34.82784390680582,-57.9646773662116"
               width="100%" 
               height="350px" 
               style={{border:0}} 
               allowFullScreen={true}
               loading="lazy" 
-              title="Catedral de La Plata">
+              title="Villa Punta Lara">
             </iframe>
           </div>
         </div>

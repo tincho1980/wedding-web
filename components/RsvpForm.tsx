@@ -15,6 +15,8 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ setView }) => {
   const [guestNames, setGuestNames] = useState('');
   const [attending, setAttending] = useState<boolean | null>(null);
   const [comments, setComments] = useState('');
+  const [guestsInputFocused, setGuestsInputFocused] = useState(false);
+  const [guestsInputValue, setGuestsInputValue] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +113,36 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ setView }) => {
           <div className="animate-fade-in bg-[#800020]/5 p-6 rounded-2xl border border-[#800020]/10 space-y-4">
             <div>
               <label htmlFor="guests" className="block text-[10px] font-bold text-[#800020] uppercase tracking-widest mb-1">Acompañantes adicionales</label>
-              <input type="number" id="guests" value={guests} onChange={(e) => setGuests(parseInt(e.target.value, 10) || 0)} min="0" className="block w-full px-4 py-2 bg-white border border-gray-100 rounded-lg focus:outline-none"/>
+              <input 
+                type="number" 
+                id="guests" 
+                value={guestsInputFocused ? guestsInputValue : guests} 
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setGuestsInputValue(value);
+                  const numValue = parseInt(value, 10);
+                  if (!isNaN(numValue) && numValue >= 0) {
+                    setGuests(numValue);
+                  }
+                }}
+                onFocus={() => {
+                  setGuestsInputFocused(true);
+                  setGuestsInputValue('');
+                }}
+                onBlur={() => {
+                  setGuestsInputFocused(false);
+                  if (guestsInputValue === '' || isNaN(parseInt(guestsInputValue, 10))) {
+                    setGuests(0);
+                    setGuestsInputValue('');
+                  } else {
+                    const numValue = parseInt(guestsInputValue, 10);
+                    setGuests(numValue >= 0 ? numValue : 0);
+                    setGuestsInputValue('');
+                  }
+                }}
+                min="0" 
+                className="block w-full px-4 py-2 bg-white border border-gray-100 rounded-lg focus:outline-none"
+              />
             </div>
              {guests > 0 && (
                 <div className="animate-fade-in">
