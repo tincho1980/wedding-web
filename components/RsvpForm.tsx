@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import type { View } from '../types';
 import { generateRsvpResponse } from '../services/geminiService';
+import { sendRsvpNotification } from '../services/emailService';
 import { CheckCircleIcon, XCircleIcon, TicketIcon } from './Icons';
 import { supabase } from '../lib/supabaseClient';
 
@@ -47,6 +48,18 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ setView }) => {
         }]);
 
       if (dbError) throw dbError;
+
+      // Enviar notificación por email (no bloquea si falla)
+      sendRsvpNotification({
+        name,
+        attending,
+        guests,
+        guestNames,
+        comments
+      }).catch(err => {
+        console.warn('No se pudo enviar el email de notificación:', err);
+        // No mostramos error al usuario, solo lo registramos
+      });
 
       const message = await generateRsvpResponse(name, attending);
       setConfirmationMessage(message);
