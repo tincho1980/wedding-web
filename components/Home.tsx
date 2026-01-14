@@ -154,6 +154,14 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
             <HeartIcon className="w-4 h-4 text-[#800020]" />
             <span className="border-y border-[#E1C16E] py-1 px-4 text-[#800020] font-bold">LA PLATA, ARG</span>
           </div>
+          <div className="mt-6 space-y-2">
+            <p className="text-[#800020] font-serif text-base md:text-lg italic">
+              El civil va a ser el <span className="font-bold">27 de febrero</span>
+            </p>
+            <p className="text-[#a77b3b] font-serif text-sm md:text-base italic">
+              La fiesta va a ser de noche (horario a confirmar)
+            </p>
+          </div>
         </header>
 
         <MobileCinemaStack images={allScenes} onImageClick={handleImageClick} />
