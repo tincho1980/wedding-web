@@ -108,7 +108,7 @@ const MobileCinemaStack: React.FC<{
 };
 
 const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
-  const weddingDate = new Date('2026-02-28T18:00:00');
+  const weddingDate = new Date('2026-02-26T20:00:00');
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const alias = "BODA.ROSI.MARTIN";
@@ -190,12 +190,17 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           {/* Fecha y Lugar */}
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 mt-8 text-lg font-light tracking-wide">
             <div className="border-y border-[#E1C16E] py-2 px-6 text-[#800020] font-bold uppercase">
-              SÁBADO 28 FEB 2026
+              SÁBADO 28 FEB 2026 20hs
             </div>
             <HeartIcon className="w-5 h-5 text-[#800020]" />
             <div className="border-y border-[#E1C16E] py-2 px-6 text-[#800020] font-bold">
               LA PLATA, ARG
             </div>
+          </div>
+          <div className="mt-6 space-y-2">
+            <p className="text-[#800020] font-serif text-base md:text-lg italic">
+              El civil va a ser el <span className="font-bold">27 de febrero</span>
+            </p>
           </div>
         </header>
 
