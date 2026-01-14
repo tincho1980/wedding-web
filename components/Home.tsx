@@ -107,7 +107,7 @@ const MobileCinemaStack: React.FC<{
 };
 
 const Home: React.FC<HomeProps> = ({ setView }) => {
-  const weddingDate = new Date('2026-02-28T18:00:00');
+  const weddingDate = new Date('2026-02-26T20:00:00');
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
@@ -150,7 +150,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
             Rosalía <span className="block text-4xl md:text-5xl text-[#a77b3b] my-2">&</span> Martín
           </h1>
           <div className="flex items-center justify-center space-x-4 mt-8 text-lg font-light tracking-wide">
-            <span className="border-y border-[#E1C16E] py-1 px-4 text-[#800020] font-bold uppercase">SÁBADO 28 FEB 2026</span>
+            <span className="border-y border-[#E1C16E] py-1 px-4 text-[#800020] font-bold uppercase">SÁBADO 28 FEB 2026 20hs</span>
             <HeartIcon className="w-4 h-4 text-[#800020]" />
             <span className="border-y border-[#E1C16E] py-1 px-4 text-[#800020] font-bold">LA PLATA, ARG</span>
           </div>
@@ -158,9 +158,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
             <p className="text-[#800020] font-serif text-base md:text-lg italic">
               El civil va a ser el <span className="font-bold">27 de febrero</span>
             </p>
-            <p className="text-[#a77b3b] font-serif text-sm md:text-base italic">
-              La fiesta va a ser de noche (horario a confirmar)
-            </p>
+
           </div>
         </header>
 
