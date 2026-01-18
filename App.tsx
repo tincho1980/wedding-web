@@ -19,7 +19,13 @@ const App: React.FC = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const names = urlParams.get('nombres');
-    if (names) {
+    const viewParam = urlParams.get('view');
+    const fotosParam = urlParams.get('fotos');
+    
+    // Si hay un parámetro 'view' o 'fotos', redirigir a esa vista
+    if (viewParam === 'photos' || fotosParam !== null) {
+      setView('photos');
+    } else if (names) {
       setGuestNames(names);
       setView('invitation');
     }

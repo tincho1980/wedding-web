@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { View } from '../types';
-import { CameraIcon, CheckCircleIcon } from './Icons';
+import { CameraIcon, CheckCircleIcon, GalleryIcon } from './Icons';
 import { supabase } from '../lib/supabaseClient';
 
 interface PhotoUploadProps {
@@ -124,7 +124,16 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setView }) => {
           <CheckCircleIcon className="w-12 h-12 mx-auto mb-3" />
           <h3 className="font-semibold text-lg">{uploadCount > 1 ? '¡Fotos subidas con éxito!' : '¡Foto subida con éxito!'}</h3>
           <p>Gracias por ser parte de nuestro álbum ❤️</p>
-          <button onClick={reset} className="mt-4 bg-[#E1C16E] hover:bg-[#d4af37] text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">Subir más fotos</button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+            <button onClick={reset} className="bg-[#E1C16E] hover:bg-[#d4af37] text-white font-bold py-2 px-6 rounded-full transition-colors duration-300 flex items-center justify-center">
+              <CameraIcon className="w-5 h-5 mr-2" />
+              Subir más fotos
+            </button>
+            <button onClick={() => setView('gallery')} className="bg-[#800020] hover:bg-[#6D071A] text-white font-bold py-2 px-6 rounded-full transition-colors duration-300 flex items-center justify-center">
+              <GalleryIcon className="w-5 h-5 mr-2" />
+              Ver galería
+            </button>
+          </div>
         </div>
       ) : (
         <>
