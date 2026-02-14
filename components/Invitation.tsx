@@ -277,7 +277,7 @@ const Invitation: React.FC<InvitationProps> = ({ setView, guestNames }) => {
           <h3 className="font-serif text-3xl mb-6 text-[#a77b3b] border-b border-[#E1C16E] pb-2 inline-block">Ubicación</h3>
           <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gray-100">
             <iframe 
-              src="https://www.google.com/maps?q=-34.82784390680582,-57.9646773662116&hl=es&z=15&output=embed&markers=color:red%7Clabel:V%7C-34.82784390680582,-57.9646773662116"
+              src="https://www.google.com/maps?q=-34.833420,-57.963578&hl=es&z=15&output=embed&markers=color:red%7Clabel:V%7C-34.833420,-57.963578"
               width="100%" 
               height="350px" 
               style={{border:0}} 
