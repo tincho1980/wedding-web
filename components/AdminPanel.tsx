@@ -4,6 +4,7 @@ import type { View, RSVPData } from '../types';
 import { supabase } from '../lib/supabaseClient';
 import { generateAdminSummary } from '../services/geminiService';
 import { CheckCircleIcon, XCircleIcon, CameraIcon } from './Icons';
+import * as XLSX from 'xlsx';
 
 interface AdminPanelProps {
   setView: (view: View) => void;
@@ -112,6 +113,34 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ setView }) => {
       console.error('Error inesperado:', err);
       alert(`Error inesperado: ${err.message || err}`);
     }
+  };
+
+  const handleExportGuestsToExcel = () => {
+    const attendingRsvps = rsvps.filter((rsvp) => rsvp.asiste);
+    const totalGuests = attendingRsvps.reduce((acc, curr) => acc + 1 + (curr.invitados || 0), 0);
+
+    const rows = attendingRsvps.map((rsvp) => [
+      rsvp.nombre,
+      rsvp.nombres_invitados?.trim() || '',
+      1 + (rsvp.invitados || 0)
+    ]);
+
+    const worksheetData: (string | number)[][] = [
+      [`Elenco de Oro - Total general de invitados: ${totalGuests}`],
+      [],
+      ['Invitado', 'Acompanante', 'Total por confirmacion'],
+      ...rows
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    worksheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }];
+    worksheet['!cols'] = [{ wch: 30 }, { wch: 45 }, { wch: 24 }];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Invitados');
+
+    const date = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(workbook, `invitados-${date}.xlsx`);
   };
 
   // Funciones para gestión de fotos
@@ -328,6 +357,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ setView }) => {
       {activeTab === 'invitados' ? (
         /* Tabla de Invitados */
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-gray-100 bg-[#FFFBF5]">
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-bold tracking-widest">Backoffice de Invitados</p>
+            <p className="text-sm text-[#a77b3b]">Descargá el listado en Excel con total por confirmación.</p>
+          </div>
+          <button
+            onClick={handleExportGuestsToExcel}
+            disabled={loading || rsvps.filter((rsvp) => rsvp.asiste).length === 0}
+            className="bg-[#800020] hover:bg-black text-white font-bold py-2 px-5 rounded-full transition-all text-xs uppercase tracking-widest shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Descargar Excel Invitados
+          </button>
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
