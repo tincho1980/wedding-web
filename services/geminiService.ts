@@ -1,21 +1,16 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-const getApiKey = () => {
+// Vite reemplaza estas referencias por el valor real en build; en el bundle queda solo el string
+const INLINED_GEMINI_KEY =
+    process.env.VITE_GEMINI_API_KEY || process.env.API_KEY || process.env.GEMINI_API_KEY || '';
+
+const getApiKey = (): string => {
     try {
-        // Intentar obtener de process.env (definido en vite.config.ts)
-        // Prioridad: VITE_GEMINI_API_KEY > API_KEY > GEMINI_API_KEY (para compatibilidad)
-        if (typeof process !== 'undefined' && process.env) {
-            return process.env.VITE_GEMINI_API_KEY || 
-                   process.env.API_KEY || 
-                   process.env.GEMINI_API_KEY || 
-                   '';
-        }
-        // Fallback para otros entornos
-        return (window as any)._env_?.VITE_GEMINI_API_KEY || 
-               (window as any)._env_?.API_KEY || 
-               (window as any)._env_?.GEMINI_API_KEY || 
-               '';
+        return INLINED_GEMINI_KEY ||
+            (typeof window !== 'undefined' && (window as any)._env_?.VITE_GEMINI_API_KEY) ||
+            (typeof window !== 'undefined' && (window as any)._env_?.API_KEY) ||
+            (typeof window !== 'undefined' && (window as any)._env_?.GEMINI_API_KEY) ||
+            '';
     } catch {
         return '';
     }
@@ -49,7 +44,7 @@ export const generateRsvpResponse = async (name: string, attending: boolean): Pr
         model: 'gemini-3-flash-preview',
         contents: prompt,
     });
-    return response.text.trim();
+    return (response.text ?? '').trim();
   } catch (error) {
     console.error("Gemini Error:", error);
     return "¡Gracias por tu respuesta! La hemos registrado correctamente.";
