@@ -25,10 +25,12 @@ const App: React.FC = () => {
     // Si hay un parámetro 'view' o 'fotos', redirigir a esa vista
     if (viewParam === 'photos' || fotosParam !== null) {
       setView('photos');
-    } else if (names) {
-      setGuestNames(names);
-      setView('invitation');
     }
+    // Redirección por nombre desactivada para mostrar siempre la home
+    // else if (names) {
+    //   setGuestNames(names);
+    //   setView('invitation');
+    // }
   }, []);
 
   // Verificar conexión a Supabase y tablas al montar el componente
@@ -101,7 +103,7 @@ const App: React.FC = () => {
         className={`flex flex-col items-center justify-center w-full transition-all duration-300 ${
           isActive 
             ? 'text-[#800020] font-bold' 
-            : 'text-gray-400 hover:text-[#800020]'
+            : 'text-gray-600 hover:text-[#800020]'
         }`}
       >
         <div className="flex flex-col items-center">
@@ -138,15 +140,11 @@ const App: React.FC = () => {
           
           <div className="flex-1 flex justify-center">
             <NavItem 
-              targetView="rsvp" 
-              icon={<RsvpIcon className="w-7 h-7" />} 
-              label="confirmar asistencia" 
+              targetView="photos" 
+              icon={<CameraIcon className="w-7 h-7" />} 
+              label="Subir fotos" 
               featured={true}
             />
-          </div>
-          
-          <div className="flex-1 flex justify-center">
-            <NavItem targetView="photos" icon={<CameraIcon className="w-5 h-5" />} label="Fotos" />
           </div>
           
           <div className="flex-1 flex justify-center">
