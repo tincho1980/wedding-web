@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { View } from '../types';
 import { GalleryIcon, ChevronLeftIcon, ChevronRightIcon } from './Icons';
 import { supabase } from '../lib/supabaseClient';
@@ -15,14 +14,127 @@ interface PhotoItem {
   eliminada?: boolean;
 }
 
+const PAGE_SIZE = 12;
+
 const Gallery: React.FC<GalleryProps> = ({ setView }) => {
     const [selectedImgIndex, setSelectedImgIndex] = useState<number | null>(null);
     const [photos, setPhotos] = useState<PhotoItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState(0);
+    const observer = useRef<IntersectionObserver | null>(null);
     
     // Swipe state
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    const getThumbnailUrl = (url: string) => {
+        if (url.includes('supabase.co')) {
+            return `${url}?width=500&resize=contain`;
+        }
+        return url;
+    };
+
+    const lastPhotoElementRef = useCallback((node: HTMLDivElement) => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
+
+    useEffect(() => {
+      const fetchPhotos = async () => {
+        const client = supabase;
+        if (!client) {
+            console.error("Supabase no está inicializado");
+            setLoading(false);
+            return;
+        }
+        setLoading(true);
+        try {
+            const from = page * PAGE_SIZE;
+            const to = from + PAGE_SIZE - 1;
+
+            let query = client
+                .from('fotos')
+                .select('*')
+                .order('created_at', { ascending: true })
+                .range(from, to);
+
+            const { data, error } = await query;
+
+            if (error) {
+                 if (error.code === '42703' || error.message?.includes('does not exist')) {
+                    console.warn('Columna eliminada no existe, obteniendo todas las fotos');
+                    const { data: allData } = await client
+                        .from('fotos')
+                        .select('*')
+                        .order('created_at', { ascending: true })
+                        .range(from, to);
+                    
+                    if (allData) {
+                        setPhotos(prev => {
+                            const newPhotos = allData.filter((p: PhotoItem) => !prev.some(existing => existing.id === p.id));
+                            return [...prev, ...newPhotos];
+                        });
+                        setHasMore(allData.length === PAGE_SIZE);
+                    }
+                 } else {
+                    console.error("Error al cargar fotos:", error);
+                 }
+            } else if (data) {
+                const fotosActivas = data.filter((photo: any) => !photo.eliminada);
+                
+                setPhotos(prev => {
+                    const newPhotos = fotosActivas.filter((p: PhotoItem) => !prev.some(existing => existing.id === p.id));
+                    return [...prev, ...newPhotos];
+                });
+                
+                setHasMore(data.length === PAGE_SIZE);
+            }
+        } catch (err) {
+          console.error("Error inesperado al cargar fotos:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPhotos();
+    }, [page]);
+
+    // Hook para detectar número de columnas
+    const useColumns = () => {
+      const [columns, setColumns] = useState(2);
+      useEffect(() => {
+        const updateColumns = () => {
+          if (window.innerWidth >= 1024) setColumns(4);
+          else if (window.innerWidth >= 768) setColumns(3);
+          else setColumns(2);
+        };
+        updateColumns();
+        window.addEventListener('resize', updateColumns);
+        return () => window.removeEventListener('resize', updateColumns);
+      }, []);
+      return columns;
+    };
+
+    const numColumns = useColumns();
+    const [columnsPhotos, setColumnsPhotos] = useState<PhotoItem[][]>([[], [], [], []]);
+
+    // Distribuir fotos en columnas cuando cambian las fotos o el número de columnas
+    useEffect(() => {
+        const newCols: PhotoItem[][] = Array.from({ length: numColumns }, () => []);
+        photos.forEach((photo, i) => {
+            newCols[i % numColumns].push(photo);
+        });
+        setColumnsPhotos(newCols);
+    }, [photos, numColumns]);
 
     // Navigation handlers
     const handlePrev = (e?: React.MouseEvent) => {
@@ -88,80 +200,55 @@ const Gallery: React.FC<GalleryProps> = ({ setView }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [selectedImgIndex, photos.length]);
 
-    useEffect(() => {
-      const fetchPhotos = async () => {
-        setLoading(true);
-        try {
-          // Intentar filtrar por eliminada, si la columna no existe, simplemente obtener todas
-          let query = supabase
-            .from('fotos')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-          // Intentar agregar el filtro de eliminada
-          const { data, error } = await query;
-
-          if (error) {
-            // Si el error es porque la columna no existe, intentar sin el filtro
-            if (error.code === '42703' || error.message?.includes('does not exist')) {
-              console.warn('Columna eliminada no existe, obteniendo todas las fotos');
-              const { data: allData, error: allError } = await supabase
-                .from('fotos')
-                .select('*')
-                .order('created_at', { ascending: false });
-              
-              if (allError) {
-                console.error("Error al cargar fotos:", allError);
-              } else if (allData) {
-                setPhotos(allData);
-              }
-            } else {
-              console.error("Error al cargar fotos:", error);
-            }
-          } else if (data) {
-            // Filtrar fotos eliminadas en el cliente si la columna existe
-            const fotosActivas = data.filter((photo: any) => !photo.eliminada);
-            setPhotos(fotosActivas);
-          }
-        } catch (err) {
-          console.error("Error inesperado al cargar fotos:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchPhotos();
-    }, []);
-
     return (
         <>
-            <div className="max-w-5xl mx-auto text-center animate-fade-in">
+            <div className="max-w-5xl mx-auto text-center animate-fade-in pb-10">
                 <GalleryIcon className="w-16 h-16 text-[#a77b3b] mx-auto mb-4" />
                 <h1 className="text-4xl font-serif mb-2 text-[#a77b3b]">Nuestros Recuerdos</h1>
                 <p className="text-gray-500 mb-8">Momentos compartidos por nuestros invitados.</p>
 
-                {loading ? (
-                <div className="py-12 flex justify-center flex-col items-center">
-                    <div className="w-12 h-12 border-4 border-[#E1C16E] border-t-transparent rounded-full animate-spin"></div>
-                    <p className="mt-4 text-gray-400 italic">Revelando fotos...</p>
-                </div>
-                ) : photos.length === 0 ? (
+                {photos.length === 0 && !loading ? (
                 <div className="py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-200">
                     <p className="text-gray-400 italic">Todavía no hay fotos en el álbum. ¡Sé el primero en subir una!</p>
                 </div>
                 ) : (
-                <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                    {photos.map((photo, index) => (
-                        <div key={photo.id} className="break-inside-avoid rounded-lg shadow-md overflow-hidden cursor-pointer group bg-gray-100" onClick={() => setSelectedImgIndex(index)}>
-                            <img 
-                                src={photo.url} 
-                                alt="Recuerdo de la boda" 
-                                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500 ease-in-out" 
-                                loading="lazy"
-                            />
+                <div className="flex gap-4">
+                    {columnsPhotos.map((colPhotos, colIndex) => (
+                        <div key={colIndex} className="flex-1 space-y-4">
+                            {colPhotos.map((photo) => {
+                                // Encontrar el índice real en el array original para el lightbox
+                                const originalIndex = photos.findIndex(p => p.id === photo.id);
+                                const isLastElement = photos.length === originalIndex + 1;
+                                
+                                return (
+                                    <div 
+                                        ref={isLastElement ? lastPhotoElementRef : null}
+                                        key={photo.id} 
+                                        className="rounded-lg shadow-md overflow-hidden cursor-pointer group bg-gray-100" 
+                                        onClick={() => setSelectedImgIndex(originalIndex)}
+                                    >
+                                        <img 
+                                            src={getThumbnailUrl(photo.url)} 
+                                            alt="Recuerdo de la boda" 
+                                            className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500 ease-in-out" 
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
                     ))}
                 </div>
+                )}
+
+                {loading && (
+                    <div className="py-8 flex justify-center items-center w-full">
+                        <div className="w-8 h-8 border-4 border-[#E1C16E] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                )}
+
+                {!hasMore && photos.length > 0 && (
+                    <p className="mt-8 text-gray-400 text-sm italic">Has llegado al final de la galería</p>
                 )}
             </div>
 
